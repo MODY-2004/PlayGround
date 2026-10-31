@@ -1,0 +1,10 @@
+{
+  "name": "midnight-hearts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A pocket-sized pixel romance arcade game. Kiss the heartbreakers to stay alive until sunrise.",
+  "scripts": {
+    "start": "python3 -m http.server 3002",
+    "serve": "python3 -m http.server 3002"
+  }
+}

@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#150c22" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Midnight Hearts" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="description" content="Midnight Hearts — a tiny pixel romance arcade game. Kiss the heartbreakers to stay alive." />
+  <title>Midnight Hearts — Kiss to Live</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23150c22'/%3E%3Cpath d='M8 13 3 8.3C1.2 6.5 2 3.5 4.5 3.5c1.4 0 2.6.9 3.5 2.2.9-1.3 2.1-2.2 3.5-2.2C14 3.5 14.8 6.5 13 8.3L8 13Z' fill='%23ff4f86'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-bg" aria-hidden="true">
+    <div class="glow glow-a"></div>
+    <div class="glow glow-b"></div>
+    <div class="page-heart heart-a">♥</div>
+    <div class="page-heart heart-b">♥</div>
+    <div class="side-copy side-copy-left" aria-hidden="true">
+      <span>ONE NIGHT</span><span>TWELVE KISSES</span>
+    </div>
+    <div class="side-copy side-copy-right" aria-hidden="true">
+      <span>KISS</span><span>TO LIVE</span>
+    </div>
+  </div>
+
+  <main class="cabinet" aria-label="Midnight Hearts game">
+    <div class="game-frame" id="gameFrame" data-state="title">
+      <canvas id="game" width="360" height="640" aria-label="Midnight Hearts game world"></canvas>
+      <div class="vignette" aria-hidden="true"></div>
+      <div class="scanlines" aria-hidden="true"></div>
+      <div class="damage-flash" id="damageFlash" aria-hidden="true"></div>
+
+      <div class="hud" id="hud" aria-live="off">
+        <div class="hud-left">
+          <div class="life-row">
+            <span class="pixel-heart" aria-hidden="true">♥</span>
+            <div class="life-track" role="progressbar" aria-label="Life" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="lifeBar">
+              <div class="life-fill" id="lifeFill"></div>
+              <div class="life-shine" aria-hidden="true"></div>
+            </div>
+            <span class="life-num" id="lifeText">100</span>
+          </div>
+          <div class="objective-row">
+            <span class="objective-label">KISSES</span>
+            <span class="objective-count" id="kissCount">00/12</span>
+            <span class="combo-chip" id="comboChip" hidden>x2</span>
+          </div>
+        </div>
+
+        <div class="timer" aria-label="Time until sunrise">
+          <span class="timer-text" id="timerText">1:15</span>
+          <span class="timer-label">SUNRISE</span>
+        </div>
+
+        <div class="hud-actions">
+          <button class="icon-btn tilt-btn" id="tiltBtn" type="button" aria-label="Enable tilt controls" aria-pressed="false">
+            <span class="tilt-glyph" aria-hidden="true">↔</span>
+            <span class="icon-label">TILT</span>
+          </button>
+          <button class="icon-btn" id="soundBtn" type="button" aria-label="Mute sound" aria-pressed="false">
+            <span class="sound-glyph" id="soundGlyph" aria-hidden="true">♪</span>
+            <span class="icon-label">SND</span>
+          </button>
+          <button class="icon-btn" id="pauseBtn" type="button" aria-label="Pause game">
+            <span class="pause-glyph" aria-hidden="true">Ⅱ</span>
+            <span class="icon-label">PAUSE</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+      <div class="touch-controls" id="touchControls" aria-label="Touch controls">
+        <div class="joystick-zone">
+          <div class="joystick" id="joystick">
+            <div class="joystick-cross" aria-hidden="true"></div>
+            <div class="joystick-knob" id="joystickKnob"></div>
+          </div>
+          <span class="control-caption">MOVE</span>
+        </div>
+        <div class="action-zone">
+          <button class="action-btn jump-btn" id="jumpBtn" type="button" aria-label="Jump">
+            <span class="action-glyph" aria-hidden="true">↑</span>
+            <span class="action-label">JUMP</span>
+          </button>
+          <button class="action-btn kiss-btn" id="kissBtn" type="button" aria-label="Kiss the nearest heartbreaker">
+            <span class="kiss-heart" aria-hidden="true">♥</span>
+            <span class="action-label">KISS</span>
+            <span class="kiss-ready" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+
+      <section class="screen title-screen" id="titleScreen" aria-label="Midnight Hearts title">
+        <div class="title-top">
+          <div class="eyebrow"><span></span> A POCKET LOVE STORY <span></span></div>
+          <h1 class="logo">
+            <span class="logo-midnight">MIDNIGHT</span>
+            <span class="logo-hearts">HEARTS</span>
+          </h1>
+          <p class="tagline">Kiss the heartbreakers. Stay alive until sunrise.</p>
+        </div>
+
+        <div class="title-middle" aria-hidden="true">
+          <div class="drifting-heart dh-a">♥</div>
+          <div class="drifting-heart dh-b">♥</div>
+          <div class="drifting-heart dh-c">♥</div>
+        </div>
+
+        <div class="title-bottom">
+          <div class="mini-rules">
+            <div class="rule">
+              <span class="rule-icon">↔</span>
+              <span class="rule-copy"><b>DODGE</b><small>Their love hurts</small></span>
+            </div>
+            <div class="rule rule-hot">
+              <span class="rule-icon">♥</span>
+              <span class="rule-copy"><b>KISS</b><small>Heal your life</small></span>
+            </div>
+            <div class="rule">
+              <span class="rule-icon">✦</span>
+              <span class="rule-copy"><b>12×</b><small>Before sunrise</small></span>
+            </div>
+          </div>
+
+          <button class="primary-btn" id="startBtn" type="button">
+            <span>START THE NIGHT</span>
+            <span class="btn-heart" aria-hidden="true">♥</span>
+          </button>
+
+          <div class="title-meta">
+            <button class="text-btn" id="titleSoundBtn" type="button">SOUND: ON</button>
+            <span class="meta-dot">·</span>
+            <span id="bestTitle">BEST 000000</span>
+          </div>
+          <p class="title-hint">Touch or keyboard · Tilt optional</p>
+        </div>
+      </section>
+
+      <section class="screen panel-screen" id="pauseScreen" aria-label="Game paused" hidden>
+        <div class="panel">
+          <span class="panel-kicker">TAKE A BREATH</span>
+          <h2>PAUSED</h2>
+          <p>The city can wait a minute.</p>
+          <button class="primary-btn" id="resumeBtn" type="button">KEEP DANCING <span class="btn-heart">♥</span></button>
+          <div class="panel-row">
+            <button class="secondary-btn" id="restartPauseBtn" type="button">RESTART</button>
+            <button class="secondary-btn" id="quitBtn" type="button">TITLE</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen panel-screen" id="overScreen" aria-label="Game over" hidden>
+        <div class="panel">
+          <span class="panel-kicker" id="overKicker">SUNRISE CAME TOO SOON</span>
+          <h2 id="overHeading">HEARTBROKEN</h2>
+          <p id="overMessage">The night got the better of you.</p>
+          <div class="result-score">
+            <span>SCORE</span>
+            <strong id="finalScore">000000</strong>
+          </div>
+          <div class="result-grid">
+            <div><span>KISSES</span><b id="finalKisses">0</b></div>
+            <div><span>BEST COMBO</span><b id="finalCombo">x1</b></div>
+            <div><span>TIME</span><b id="finalTime">0:00</b></div>
+          </div>
+          <div class="new-best" id="newBest" hidden>★ NEW HIGH SCORE ★</div>
+          <button class="primary-btn" id="againBtn" type="button">ONE MORE NIGHT <span class="btn-heart">♥</span></button>
+          <button class="text-btn title-link" id="titleBtn" type="button">BACK TO TITLE</button>
+        </div>
+      </section>
+
+      <div class="rotate-hint" aria-hidden="true">
+        <span>↻</span>
+        <p>This rooftop is best in portrait.</p>
+      </div>
+    </div>
+
+    <div class="desktop-footer" aria-hidden="true">
+      <span>MIDNIGHT HEARTS</span>
+      <span class="footer-hearts">♥ ♥ ♥</span>
+      <span>KISS TO LIVE</span>
+    </div>
+  </main>
+
+  <script src="js/audio.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/background.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
