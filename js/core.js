@@ -347,9 +347,9 @@
     if (!Number.isFinite(raw)) return;
     MH.motion.seenEvent = true;
 
+    // The first reading sets the neutral angle. Holding a lean keeps moving the
+    // player instead of slowly cancelling out; toggle tilt to recalibrate.
     if (MH.motion.center === null) MH.motion.center = raw;
-    // Follow slow drift, but keep immediate tilt response.
-    MH.motion.center = MH.lerp(MH.motion.center, raw, 0.008);
     let axis = (raw - MH.motion.center) / 18;
     if (Math.abs(axis) < 0.08) axis = 0;
     MH.input.tiltAxis = MH.clamp(axis, -1, 1);
